@@ -3,5 +3,6 @@ instance/
 *.pyc
 __pycache__/
 .env
+.env.txt
 venv/
 .vscode/
