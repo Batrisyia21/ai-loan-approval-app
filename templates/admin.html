@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - LendSafe</title>
+    <style>
+        /* ... (Keep all your existing CSS here) ... */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { display: flex; min-height: 100vh; background-color: #f4f7f9; overflow-x: hidden; }
+
+        .sidebar { width: 260px; background: #1a1a1a; color: white; display: flex; flex-direction: column; padding: 20px 0; position: fixed; height: 100%; transition: transform 0.3s ease-in-out; z-index: 1000; }
+        .sidebar.closed { transform: translateX(-260px); }
+        .sidebar-header { padding: 0 25px 30px; font-size: 20px; font-weight: 700; color: #3b82f6; border-bottom: 1px solid #333; margin-bottom: 20px; }
+        .nav-link { padding: 15px 25px; color: #bbb; text-decoration: none; display: flex; align-items: center; gap: 12px; transition: 0.3s; }
+        .nav-link:hover, .nav-link.active { background: #0056b3; color: white; }
+
+        .main-content { margin-left: 260px; flex: 1; padding: 40px; transition: margin-left 0.3s ease-in-out; }
+        .main-content.expanded { margin-left: 0; }
+
+        header { margin-bottom: 35px; display: flex; justify-content: space-between; align-items: center; }
+        .header-left { display: flex; align-items: center; gap: 20px; }
+        .toggle-btn { background: #1a1a1a; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 18px; transition: background 0.2s; }
+        .toggle-btn:hover { background: #3b82f6; }
+        .welcome-text h1 { font-size: 26px; color: #333; }
+        .live-badge { background: #e0f2fe; color: #0369a1; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+        .dot { height: 8px; width: 8px; background-color: #0369a1; border-radius: 50%; display: inline-block; animation: blink 1.5s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .stat-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-left: 5px solid #3b82f6; transition: transform 0.2s; }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-card h3 { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .stat-card .value { font-size: 32px; font-weight: 700; color: #1e293b; }
+
+        .data-section { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px; }
+        .table-header h2 { font-size: 18px; color: #1e293b; }
+
+        .search-form { display: flex; gap: 10px; align-items: center; }
+        .search-input { padding: 10px 15px; border: 1px solid #e2e8f0; border-radius: 8px; width: 220px; font-size: 14px; outline: none; transition: border 0.3s; }
+        .search-btn { background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background 0.3s; }
+        .export-btn { background: #10b981; color: white; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; }
+
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { background: #f8f9fa; padding: 15px; color: #64748b; font-size: 11px; text-transform: uppercase; font-weight: 800; border-bottom: 2px solid #edf2f7; }
+        td { padding: 15px; border-bottom: 1px solid #edf2f7; font-size: 14px; color: #475569; }
+        .status { padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .status-1 { background: #dcfce7; color: #166534; } 
+        .status-0 { background: #fee2e2; color: #991b1b; } 
+        .btn-delete { color: #ef4444; text-decoration: none; font-size: 12px; font-weight: bold; padding: 5px 10px; border: 1px solid #fecaca; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">LendSafe</div>
+        <a href="{{ url_for('admin_dashboard') }}" class="nav-link active">📊 Dashboard</a>
+        <a href="{{ url_for('predict_page') }}" class="nav-link">🤖 Run Prediction</a>
+        <a href="{{ url_for('logout') }}" class="nav-link" style="margin-top: auto; border-top: 1px solid #333; padding-top: 30px; color: #ff6b6b;">🚪 Logout</a>
+    </div>
+
+    <div class="main-content" id="main-content">
+        <header>
+            <div class="header-left">
+                <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+                <div class="welcome-text">
+                    <h1>Admin Overview</h1>
+                    <p>Logged in as: <strong>{{ current_user.username }}</strong></p>
+                </div>
+            </div>
+            <div class="live-badge">
+                <span class="dot"></span> LIVE SYSTEM ACTIVE
+            </div>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total records</h3>
+                <div class="value">{{ total }}</div>
+            </div>
+            <div class="stat-card" style="border-left-color: #10b981;">
+                <h3>Total Approved</h3>
+                <div class="value">{{ approved }}</div>
+            </div>
+            <div class="stat-card" style="border-left-color: #ef4444;">
+                <h3>Total Rejected</h3>
+                <div class="value">{{ rejected }}</div>
+            </div>
+        </div>
+
+        <div class="data-section">
+            <div class="table-header">
+                <h2>Recent Submissions</h2>
+                <div style="display: flex; gap: 10px;">
+                    <a href="{{ url_for('export_csv') }}" class="export-btn">📥 Export CSV</a>
+                    <form action="{{ url_for('admin_dashboard') }}" method="GET" class="search-form">
+                        <input type="text" name="search" class="search-input" placeholder="Search ID..." value="{{ search_query }}">
+                        <button type="submit" class="search-btn">Search</button>
+                    </form>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Details</th>
+                        <th>Income</th>
+                        <th>Loan</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in applications %}
+                    <tr>
+                        <td style="font-weight: 700; color: #3b82f6;">#{{ app['applicant_id'] }}</td>
+                        <td>{{ app['age']|int }}yr / {{ app['gender'] }}</td>
+                        <td>${{ "{:,}".format(app['annual_income']|int) }}</td>
+                        <td>${{ "{:,}".format(app['loan_amount']|int) }}</td>
+                        <td>
+                            <span class="status status-{{ app['loan_approved'] }}">
+                                {{ 'Approved' if app['loan_approved']|int == 1 else 'Rejected' }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('delete_entry', id=app['applicant_id']) }}" 
+                               class="btn-delete" 
+                               onclick="return confirm('Permanently delete this application?')">Delete</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 30px; color: #888;">No applications found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('main-content');
+            sidebar.classList.toggle('closed');
+            content.classList.toggle('expanded');
+        }
+    </script>
+</body>
+</html>

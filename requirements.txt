@@ -1,0 +1,8 @@
+Flask
+Flask-SQLAlchemy
+Flask-Login
+gunicorn
+xgboost
+pandas
+numpy
+scikit-learn

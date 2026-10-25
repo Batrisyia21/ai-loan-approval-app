@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - LendSafe Portal</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-image: url("{{ url_for('static', filename='background2.jpg') }}"); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-color: #f4f7f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: linear-gradient(90deg, #2575fc 0%, #6a11cb 100%);
+            padding: 15px 0;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between; 
+            align-items: center;
+            padding: 0 25px;
+        }
+
+        .logo { font-size: 22px; font-weight: 700; display: flex; align-items: center; gap: 10px; text-decoration: none; color: white; }
+        .nav-links { display: flex; gap: 25px; align-items: center; }
+        .nav-links a { color: white; text-decoration: none; font-size: 14px; font-weight: 500; opacity: 0.85; transition: all 0.3s ease; }
+        .nav-links a:hover { opacity: 1; transform: translateY(-1px); }
+
+        .hero-section { padding: 80px 20px; text-align: center; }
+
+        .hero-card {
+            background: rgba(255, 255, 255, 0.92); 
+            backdrop-filter: blur(10px); 
+            max-width: 950px;
+            margin: 0 auto;
+            padding: 60px 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .hero-card h1 { font-size: 42px; color: #1a1a1a; margin-bottom: 20px; font-weight: 700; }
+        .subtitle { color: #555; font-size: 18px; margin-bottom: 35px; max-width: 650px; margin-left: auto; margin-right: auto; }
+
+        .hero-btns { display: flex; justify-content: center; gap: 15px; }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary { background: #2575fc; color: white; border: none; }
+        .btn-secondary { background: white; color: #555; border: 1.5px solid #ddd; }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(37, 117, 252, 0.2); }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            max-width: 1100px;
+            margin: 0 auto 60px;
+            padding: 0 20px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover { transform: translateY(-5px); }
+        .feature-icon { font-size: 32px; margin-bottom: 20px; display: block; }
+
+        footer { background: #1a1a1a; color: white; text-align: center; padding: 40px 20px; }
+        .footer-tech { font-size: 12px; opacity: 0.5; margin-top: 8px; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="logo">
+                <span>📈</span> LendSafe Portal
+            </a>
+            <div class="nav-links">
+                {% if current_user.is_authenticated %}
+                    <span style="font-size: 13px; opacity: 0.7;">Hi, {{ current_user.username }}</span>
+                    <a href="{{ url_for('predict_page') }}">Go to Predictor</a>
+                    {% if current_user.role == 'admin' %}
+                        <a href="{{ url_for('admin_dashboard') }}" style="color: #ffc107;">Admin Panel</a>
+                    {% endif %}
+                    <a href="{{ url_for('logout') }}" style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 5px;">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('signup') }}">Register</a>
+                    <a href="{{ url_for('login_page') }}">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero-section">
+        <div class="hero-card">
+            <h1>AI-Powered Loan Intelligence</h1>
+            <p class="subtitle">Streamline your financial workflow using high-accuracy XGBoost predictions to minimize credit risk and automate decision making.</p>
+            <div class="hero-btns">
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('predict_page') }}" class="btn btn-primary">Analyze a Loan</a>
+                {% else %}
+                    <a href="{{ url_for('signup') }}" class="btn btn-primary">Get Started Now</a>
+                    <a href="{{ url_for('login_page') }}" class="btn btn-secondary">Existing User Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <section class="features-grid">
+        <div class="feature-card">
+            <span class="feature-icon">📊</span>
+            <h3>XGBoost Intelligence</h3>
+            <p>Leveraging state-of-the-art machine learning models to analyze eligibility with precision.</p>
+        </div>
+        <div class="feature-card">
+            <span class="feature-icon">🛡️</span>
+            <h3>Role-Based Access</h3>
+            <p>Secure authentication for both standard applicants and financial administrators.</p>
+        </div>
+        <div class="feature-card">
+            <span class="feature-icon">⚡</span>
+            <h3>Real-time Analysis</h3>
+            <p>Receive instant approval probabilities and confidence scores in seconds.</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 LendSafe Portal - Bachelor Project Submission</p>
+        <p class="footer-tech">Built with Flask, SQLAlchemy & XGBoost AI</p>
+    </footer>
+
+</body>
+</html>
