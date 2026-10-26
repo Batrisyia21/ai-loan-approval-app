@@ -1,15 +1,15 @@
-# 🛡️ LendSafe - AI-Powered Loan Approval System
+# LendSafe - AI-Powered Loan Approval System
 
 LendSafe is a full-stack Flask web application integrated with an **XGBoost Machine Learning model** to automate and evaluate loan applications instantly. It features secure user authentication, role-based dashboards (Admin & User), real-time probability predictions, and data export capabilities.
 
 ---
 
-## 📌 Project Note
+## Project Note
 > **Note:** This was a group project, but the entire website, backend, and machine learning integration were developed solo by **Me**! 🚀
 
 ---
 
-## 🚀 Features
+## Features
 
 - **AI Loan Prediction:** Instantly predicts whether a loan application should be *Approved* or *Rejected* using an XGBoost classifier with confidence scoring.
 - **Role-Based Access Control (RBAC):**
@@ -20,7 +20,7 @@ LendSafe is a full-stack Flask web application integrated with an **XGBoost Mach
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 * **Backend:** Python, Flask, Flask-SQLAlchemy, Flask-Login, python-dotenv
 * **Machine Learning:** XGBoost, Scikit-Learn, Pandas, NumPy, Joblib
@@ -29,7 +29,7 @@ LendSafe is a full-stack Flask web application integrated with an **XGBoost Mach
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 ├── app.py                     # Main Flask application & routes
