@@ -5,7 +5,7 @@ LendSafe is a full-stack Flask web application integrated with an **XGBoost Mach
 ---
 
 ## Project Note
-> **Note:** This was a group project, but the entire website, backend, and machine learning integration were developed solo by **Me**! 🚀
+> **Note:** This was a group project, but the entire website, backend, and machine learning integration were developed solo by **Nur Batrisyia which is ME**! 
 
 ---
 
